@@ -1,0 +1,29 @@
+moon-weiqi (Moon GameHub 围棋)
+Copyright 2026 HinaKalo (orange.lunar)
+
+This product is a modified version of MokuMoku by Krab-Lab
+(https://github.com/Krab-Lab/MokuMoku, commit 70784e7894103634a243cc5a2fdc8792951e9b5c),
+licensed under the Apache License, Version 2.0. The upstream README is kept as UPSTREAM.md.
+
+Modifications by HinaKalo (2026):
+
+- Files changed from upstream:
+  - cloud-functions/api/game.js     -- EdgeOne Blob storage replaced by the SQLite store (store.js);
+                                       8-character random room codes; null-safe request parsing
+  - cloud-functions/api/presence.js -- EdgeOne Blob storage replaced by the SQLite store (store.js)
+  - public/index.html               -- Chinese GameHub page: hub link, private-room entry, invite dialog,
+                                       upstream credit footer; Google Fonts removed
+  - public/script.js                -- Go only, Chinese locale, relative API URLs under the GameHub path,
+                                       invite links and room codes, new localStorage keys
+  - public/styles.css               -- styles appended for the GameHub entry, invite dialog and credit footer
+  - tests/rules.test.js             -- imports from public/ and runs against an in-memory SQLite store
+- The upstream frontend files (index.html, script.js, styles.css, ai.js, go-mcts-worker.js, favicon.ico,
+  apple-touch-icon.png) were moved under public/; ai.js, go-mcts-worker.js and the two icons are otherwise
+  unchanged. The upstream README.md is kept unchanged as UPSTREAM.md.
+- Files added: server.js, store.js, gamehub-weiqi.service, README.md, NOTICE and repository tooling
+  (.github/, .gitignore, .gitattributes, SECURITY.md).
+- Files removed: edgeone.json, cloud-functions/api/ws.js, cloud-functions/api/internal/cleanup.js
+  (EdgeOne Pages specific); package.json was rewritten for Node.js 24.
+
+All files, including the modifications and additions, are distributed under the Apache License,
+Version 2.0 (see LICENSE).

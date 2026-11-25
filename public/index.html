@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>围棋 · Moon GameHub</title>
+    <link rel="icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <button class="brand brand-button" id="brandButton" type="button" aria-label="返回月灯公会">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>← 月灯公会</span>
+      </button>
+      <div class="connection-pill" id="connectionStatus" data-i18n="connection.connecting">Connecting</div>
+    </header>
+
+    <main class="app-shell">
+      <section class="game-select" id="gameSelectView" aria-labelledby="homeTitle">
+        <div class="hero-copy">
+          <p class="eyebrow" data-i18n="home.eyebrow">Real-time board games</p>
+          <h1 id="homeTitle">MokuMoku</h1>
+          <p class="lead" data-i18n="home.lead">Choose a game, then play through public matchmaking or a private room.</p>
+        </div>
+
+        <div class="game-grid" id="gameGrid">
+          <button class="game-card coral-card" type="button" data-game="gomoku">
+            <span class="panel-kicker" data-i18n="game.gomoku.kicker">Five in a row</span>
+            <strong data-i18n="game.gomoku.name">Gomoku</strong>
+            <span data-i18n="game.gomoku.desc">15x15, black first, connect five stones.</span>
+          </button>
+          <button class="game-card blue-card" type="button" data-game="go">
+            <span class="panel-kicker" data-i18n="game.go.kicker">Territory</span>
+            <strong data-i18n="game.go.name">Go</strong>
+            <span data-i18n="game.go.desc">19x19 with captures, ko, pass, and Chinese area scoring.</span>
+          </button>
+          <button class="game-card magenta-card" type="button" data-game="reversi">
+            <span class="panel-kicker" data-i18n="game.reversi.kicker">Flip discs</span>
+            <strong data-i18n="game.reversi.name">Reversi</strong>
+            <span data-i18n="game.reversi.desc">8x8 Othello-style play with legal move highlights.</span>
+          </button>
+          <button class="game-card purple-card" type="button" data-game="connect6">
+            <span class="panel-kicker" data-i18n="game.connect6.kicker">Two-stone turns</span>
+            <strong data-i18n="game.connect6.name">Connect6</strong>
+            <span data-i18n="game.connect6.desc">19x19. Black opens with one stone, then turns place two.</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="lobby hidden" id="lobbyView" aria-labelledby="lobbyTitle">
+        <div class="lobby-heading">
+          <button class="button secondary compact" id="backToGamesButton" hidden type="button" data-i18n="actions.changeGame">Change Game</button>
+          <div class="hero-copy">
+            <p class="eyebrow" id="selectedGameKicker">Live match</p>
+            <h1 id="lobbyTitle">Gomoku</h1>
+            <p class="lead" id="selectedGameLead">Standard 15x15 board. Connect five stones horizontally, vertically, or diagonally to win.</p>
+          </div>
+        </div>
+
+        <div class="entry-grid">
+          <section class="entry-panel coral-panel hidden" aria-labelledby="publicTitle">
+            <div>
+              <p class="panel-kicker" data-i18n="lobby.publicKicker">Public Match</p>
+              <h2 id="publicTitle" data-i18n="lobby.publicTitle">Public Match</h2>
+              <p data-i18n="lobby.publicDesc">Join this game's matchmaking queue. The first player takes black.</p>
+            </div>
+            <button class="button primary" id="matchButton" type="button" data-i18n="actions.startMatch">Start Matching</button>
+            <button class="button secondary ghost-hidden" id="cancelMatchButton" type="button" data-i18n="actions.cancelMatch">Cancel Matching</button>
+          </section>
+
+          <section class="entry-panel ai-panel" id="aiPanel" aria-labelledby="aiTitle">
+            <div>
+              <p class="panel-kicker" data-i18n="lobby.aiKicker">AI Opponent</p>
+              <h2 id="aiTitle" data-i18n="lobby.aiTitle">AI Opponent</h2>
+              <p data-i18n="lobby.aiDesc">Play this game against AI. Choose your color to begin.</p>
+            </div>
+            <div class="ai-controls">
+              <button class="button primary" id="aiBlackButton" type="button" data-i18n="actions.playAiBlack">Play Black vs AI</button>
+              <button class="button secondary" id="aiWhiteButton" type="button" data-i18n="actions.playAiWhite">Play White vs AI</button>
+            </div>
+          </section>
+
+          <section class="entry-panel" aria-labelledby="privateTitle">
+            <div>
+              <p class="panel-kicker">月灯公会</p>
+              <h2 id="privateTitle">公会棋室</h2>
+              <p>与搭档在棋室落座，双方会直接进入棋局。</p>
+            </div>
+            <a class="button primary" href="../?game=weiqi">回公会棋室</a>
+            <details class="room-controls">
+              <summary>自行设局</summary>
+              <button class="button primary" id="createRoomButton" type="button" data-i18n="actions.createRoom">Create Room</button>
+              <label class="room-input-label" for="roomInput" data-i18n="labels.roomNumber">Room Number</label>
+              <div class="join-row">
+                <input id="roomInput" class="text-input" type="text" maxlength="8" autocomplete="off" data-i18n-placeholder="placeholders.roomNumber" placeholder="例如 1B3D5F7A">
+                <button class="button secondary" id="joinRoomButton" type="button" data-i18n="actions.join">Join</button>
+              </div>
+            </details>
+          </section>
+        </div>
+      </section>
+
+      <section class="game-layout hidden" id="gameView" aria-labelledby="gameTitle">
+        <div class="game-main">
+          <div class="game-heading">
+            <div>
+              <p class="eyebrow" id="roomMode">Private Room</p>
+              <h1 id="gameTitle"><span id="gameNameInRoom">Gomoku</span> <span id="gameTitlePrefix" data-i18n="game.room">Room</span> <span id="roomCode">------</span></h1>
+            </div>
+            <button class="button secondary compact" id="copyRoomButton" type="button" data-i18n="actions.copyRoom">Copy Room Number</button>
+          </div>
+
+          <div class="board-wrap">
+            <div class="board" id="board" role="grid" aria-label="Board" data-i18n-aria="aria.board"></div>
+          </div>
+        </div>
+
+        <aside class="status-panel" aria-label="Game status" data-i18n-aria="aria.statusPanel">
+          <div class="status-card">
+            <p class="panel-kicker" data-i18n="game.statusKicker">Status</p>
+            <h2 id="gameStatus" data-i18n="status.waitingOpponent">Waiting for opponent</h2>
+            <p id="gameDetail" data-i18n="details.initial">Share the room number with your opponent.</p>
+          </div>
+
+          <div class="meta-list">
+            <div>
+              <span data-i18n="labels.yourColor">Your Color</span>
+              <strong id="yourColor">-</strong>
+            </div>
+            <div>
+              <span data-i18n="labels.currentTurn">Current Turn</span>
+              <strong id="turnLabel">-</strong>
+            </div>
+            <div>
+              <span data-i18n="labels.turnTimer">Move Timer</span>
+              <strong id="turnTimer">-</strong>
+            </div>
+            <div>
+              <span data-i18n="labels.opponentStatus">Opponent</span>
+              <strong id="opponentStatus" data-i18n="opponent.waiting">Waiting</strong>
+            </div>
+            <div>
+              <span id="moveCountLabel" data-i18n="labels.moves">Moves</span>
+              <strong id="moveCount">0</strong>
+            </div>
+            <div>
+              <span id="scoreMetaLabel" data-i18n="labels.score">Score</span>
+              <strong id="scoreLabel">-</strong>
+            </div>
+          </div>
+
+          <div class="action-stack">
+            <button class="button secondary ghost-hidden" id="passButton" type="button" data-i18n="actions.pass">Pass</button>
+            <button class="button secondary ghost-hidden" id="undoConnect6Button" type="button" data-i18n="actions.undoSelection">Undo Selection</button>
+            <button class="button secondary ghost-hidden" id="resignButton" type="button" data-i18n="actions.resign">Resign</button>
+            <button class="button primary" id="restartButton" type="button" data-i18n="actions.restart">Restart</button>
+            <button class="button secondary" id="swapRestartButton" type="button" data-i18n="actions.swapRestart">Swap Colors and Restart</button>
+            <button class="button secondary" id="leaveButton" type="button" data-i18n="actions.leave">Leave Room</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <div class="modal-backdrop hidden" id="restartModal" role="dialog" aria-modal="true" aria-labelledby="restartModalTitle">
+      <div class="modal">
+        <p class="panel-kicker" data-i18n="modal.kicker">Restart</p>
+        <h2 id="restartModalTitle" data-i18n="modal.normalTitle">Your opponent wants to restart</h2>
+        <p id="restartModalBody" data-i18n="modal.normalBody">Confirming will clear the board and black will move first again.</p>
+        <div class="modal-actions">
+          <button class="button secondary" id="restartDismissButton" type="button" data-i18n="actions.later">Later</button>
+          <button class="button primary" id="restartConfirmButton" type="button" data-i18n="actions.restart">Restart</button>
+        </div>
+      </div>
+    </div>
+
+    <dialog id="inviteDialog" aria-labelledby="inviteTitle">
+      <form method="dialog">
+        <h2 id="inviteTitle">邀请好友</h2>
+        <p>复制下面的链接，或把房号发给好友。</p>
+        <input class="text-input" type="url" id="inviteUrl" aria-label="邀请链接" readonly>
+        <button class="button secondary" type="submit">关闭</button>
+      </form>
+    </dialog>
+    <footer class="game-credit">基于 <a href="https://github.com/Krab-Lab/MokuMoku" rel="noreferrer">MokuMoku</a> · <a href="./LICENSE">Apache-2.0</a></footer>
+    <script src="./script.js" type="module"></script>
+  </body>
+</html>
